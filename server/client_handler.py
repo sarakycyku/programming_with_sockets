@@ -18,4 +18,53 @@ class ClientHandler(threading.Thread):
         self.running = True
         self.last_activity = time.time()
         
-   
+    def run(self):
+        """Trajtimi i lidhjes me klientin"""
+        print(f"Klient i ri: {self.client_address} (Admin: {self.is_admin})")
+        
+        welcome_msg = {
+            "type": "welcome",
+            "message": f"Mireserdhe! Ti je {'ADMIN' if self.is_admin else 'klient'}",
+            "ip": self.client_ip,
+            "permissions": "read,write,execute" if self.is_admin else "read"
+        }
+        self.send_message(welcome_msg)
+        
+        self.server_stats["active_connections"] += 1
+        self.server_stats["total_messages"] += 1
+        self.server_stats["client_ips"].add(self.client_ip)
+        self.server_stats["messages_log"].append({
+            "time": time.strftime("%H:%M:%S"),
+            "ip": self.client_ip,
+            "type": "connect",
+            "message": "Klient u lidh"
+        })
+        
+        try:
+            self.client_socket.settimeout(5.0) 
+            
+            while self.running:
+                if time.time() - self.last_activity > CLIENT_TIMEOUT:
+                    print(f"Timeout per {self.client_address}")
+                    timeout_msg = {"type": "error", "message": "Lidhja u mbyll sepse nuk ka aktivitet"}
+                    self.send_message(timeout_msg)
+                    break
+                
+                try:
+                    data = self.client_socket.recv(4096).decode('utf-8')
+                    if not data:
+                        break
+                    
+                    self.last_activity = time.time()  
+                    self.handle_message(data)
+                    
+                except socket.timeout:
+                    continue
+                except Exception as e:
+                    print(f"Error: {e}")
+                    break
+                    
+        except Exception as e:
+            print(f"Error: {e}")
+        finally:
+            self.disconnect()
