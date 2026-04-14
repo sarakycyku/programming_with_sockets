@@ -68,3 +68,32 @@ class ClientHandler(threading.Thread):
             print(f"Error: {e}")
         finally:
             self.disconnect()
+            
+    def handle_message(self, data):
+        """Proceso mesazhin e marrë"""
+        try:
+            msg = json.loads(data)
+            command = msg.get("command", "")
+            args = msg.get("args", [])
+            
+            print(f" {self.client_address}: {command} {args}")
+            
+            self.server_stats["total_messages"] += 1
+            self.server_stats["messages_log"].append({
+                "time": time.strftime("%H:%M:%S"),
+                "ip": self.client_ip,
+                "type": "command",
+                "command": command,
+                "args": args
+            })
+            
+            if len(self.server_stats["messages_log"]) > 100:
+                self.server_stats["messages_log"] = self.server_stats["messages_log"][-50:]
+            
+            response = self.process_command(command, args)
+            self.send_message(response)
+            
+        except json.JSONDecodeError:
+            self.send_message({"status": "error", "message": "Invalid format JSON"})
+        except Exception as e:
+            self.send_message({"status": "error", "message": str(e)})
