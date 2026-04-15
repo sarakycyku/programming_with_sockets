@@ -87,3 +87,20 @@ class TCPServer:
         """Mbylle serverin"""
         print("\n[!] Mbyllja e serverit...")
         self.running = False
+                # Mbylli të gjithë klientët
+        for handler in list(self.clients.values()):
+            handler.running = False
+            try:
+                handler.client_socket.close()
+            except:
+                pass
+        
+        if self.server_socket:
+            self.server_socket.close()
+        
+        print("[OK] Serveri u mbyll.")
+        sys.exit(0)
+
+if __name__ == "__main__":
+    server = TCPServer()
+    server.start() 
