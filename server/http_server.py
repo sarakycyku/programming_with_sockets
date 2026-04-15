@@ -2,6 +2,9 @@
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
+import threading
+from config import HTTP_HOST, HTTP_PORT
+
 
 
 class StatsHandler(BaseHTTPRequestHandler):
@@ -38,3 +41,14 @@ class StatsHandler(BaseHTTPRequestHandler):
             self.wfile.write(b"Not Found")
 
 # Për çdo rrugë tjetër, kthen përgjigje 404 "Not Found".
+
+def start_http_server(stats, host=HTTP_HOST, port=HTTP_PORT):
+    """Nis HTTP serverin në thread të veçantë"""
+    StatsHandler.server_stats = stats
+
+    server = HTTPServer((host, port), StatsHandler)
+    print(f"[HTTP] Server në http://{host}:{port}/stats")
+
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    return server
