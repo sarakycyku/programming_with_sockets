@@ -23,3 +23,26 @@ class TCPServer:
         
         # Nis HTTP server paralel
         self.http_server = start_http_server(self.stats)
+def start(self):
+    """Nis serverin kryesor"""
+    self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    
+    try:
+        self.server_socket.bind((SERVER_HOST, SERVER_PORT))
+        self.server_socket.listen(MAX_CLIENTS)
+        self.running = True
+        
+        print(f"=" * 50)
+        print(f"SERVERI TCP - Grupi 33")
+        print(f"=" * 50)
+        print(f"Socket server: {SERVER_HOST}:{SERVER_PORT}")
+        print(f"HTTP server:   http://{SERVER_HOST}:8080/stats")
+        print(f"Max klientë:   {MAX_CLIENTS}")
+        print(f"Grupi IP-të:   {', '.join(GROUP_IPS)}")
+        print(f"Admin IP:      {GROUP_IPS[0]}")
+        print(f"=" * 50)
+        print("Pres për lidhje...")
+    except OSError as e:
+        print(f"Gabim në lidhjen e socketit: {e}")
+        sys.exit(1)
