@@ -16,3 +16,12 @@ CLIENT_TIMEOUT = 60      # Sekonda për timeout (mbylle lidhjen nëse hesht)
 # Folderi për file-t
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data", "files")
+
+# IP-të e anëtarëve të grupit (3 veta)
+GROUP_IPS = ["192.168.0.17", " 192.168.0.21", "192.168.0.102"]
+
+# Admin-i (klienti me privilegje të plota) - IP e parë
+ADMIN_IP = "192.168.0.21"
+
+# Krijo folderin nëse nuk ekziston
+os.makedirs(DATA_DIR, exist_ok=True)
