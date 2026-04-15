@@ -58,3 +58,30 @@ class FileManager:
             return {"status": "success", "message": f"File '{filename}' u fshi me sukses!"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
+    def search_files(self, keyword):
+        """Kerko file sipas keyword """
+        try:
+            files = os.listdir(self.data_dir)
+            matching = [f for f in files if keyword.lower() in f.lower()]
+            return {"status": "success", "files": matching, "keyword": keyword}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+    
+    def file_info(self, filename):
+        """Informacion rreth nje file"""
+        try:
+            filepath = os.path.join(self.data_dir, filename)
+            if not os.path.exists(filepath):
+                return {"status": "error", "message": f"File '{filename}' nuk ekziston!"}
+            
+            stat = os.stat(filepath)
+            info = {
+                "filename": filename,
+                "size_bytes": stat.st_size,
+                "size_kb": round(stat.st_size / 1024, 2),
+                "created": datetime.fromtimestamp(stat.st_ctime).strftime("%Y-%m-%d %H:%M:%S"),
+                "modified": datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+            }
+            return {"status": "success", "info": info}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
