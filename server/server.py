@@ -43,14 +43,47 @@ class TCPServer:
             print(f"Admin IP:      {GROUP_IPS[0]}")
             print(f"=" * 50)
             print("Pres për lidhje...")
-        except OSError as e:
-            print(f"Gabim në lidhjen e socketit: {e}")
-            sys.exit(1)
-        
         # Handle Ctrl+C
-        signal.signal(signal.SIGINT, self.shutdown)
-        
-        while self.running:
-            try:
-                self.server_socket.settimeout(1.0)
-                client_socket, client_address = self.server_socket.accept()
+            signal.signal(signal.SIGINT, self.shutdown)
+            
+            while self.running:
+                try:
+                    self.server_socket.settimeout(1.0)
+                    client_socket, client_address = self.server_socket.accept()
+                    
+                    # Kontrollo numrin e klientëve
+                    if len(self.clients) >= MAX_CLIENTS:
+                        print(f"[!] Refuzuar {client_address} - limiti i arritur")
+                        client_socket.send(b'{"error": "Server i zene, provo me vone"}')
+                        client_socket.close()
+                        continue
+                    # Krijo handler për klientin
+                    handler = ClientHandler(
+                        client_socket, 
+                        client_address, 
+                        self.stats,
+                        self.on_client_disconnect
+                    )
+                    self.clients[client_address] = handler
+                    handler.start()
+                    
+                except socket.timeout:
+                    continue
+                except Exception as e:
+                    if self.running:
+                        print(f"[!] Gabim: {e}")
+                        
+        except Exception as e:
+            print(f"[!] Gabim fatal: {e}")
+        finally:
+            self.shutdown()
+    
+    def on_client_disconnect(self, address):
+        """Callback kur një klient shkëputet"""
+        if address in self.clients:
+            del self.clients[address]
+    
+    def shutdown(self, signum=None, frame=None):
+        """Mbylle serverin"""
+        print("\n[!] Mbyllja e serverit...")
+        self.running = False
