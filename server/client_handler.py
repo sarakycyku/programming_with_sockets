@@ -70,7 +70,7 @@ class ClientHandler(threading.Thread):
             self.disconnect()
             
     def handle_message(self, data):
-        """Proceso mesazhin e marrë"""
+        """Proceso mesazhin e marre"""
         try:
             msg = json.loads(data)
             command = msg.get("command", "")
@@ -97,3 +97,68 @@ class ClientHandler(threading.Thread):
             self.send_message({"status": "error", "message": "Invalid format JSON"})
         except Exception as e:
             self.send_message({"status": "error", "message": str(e)})
+    
+    def process_command(self, command, args):
+        """Ekzekuto komanden"""
+        
+        if command == "/list":
+            return self.file_manager.list_files()
+        
+        elif command == "/read":
+            if not args:
+                return {"status": "error", "message": "Perdor: /read <filename>"}
+            return self.file_manager.read_file(args[0])
+        
+        elif command == "/search":
+            if not args:
+                return {"status": "error", "message": "Perdor: /search <keyword>"}
+            return self.file_manager.search_files(args[0])
+        
+        elif command == "/info":
+            if not args:
+                return {"status": "error", "message": "Perdor: /info <filename>"}
+            return self.file_manager.file_info(args[0])
+        
+        elif command in ["/upload", "/delete"]:
+            if not self.is_admin:
+                return {"status": "error", "message": "Vetem admini mund te ekzekutoje kete komande."}
+            
+            if command == "/upload":
+                if len(args) < 2:
+                    return {"status": "error", "message": "Perdor: /upload <filename> <content>"}
+                return self.file_manager.upload_file(args[0], args[1])
+            
+            elif command == "/delete":
+                if not args:
+                    return {"status": "error", "message": "Perdor: /delete <filename>"}
+                return self.file_manager.delete_file(args[0])
+        
+        elif command == "/download":
+            if not args:
+                return {"status": "error", "message": "Perdor: /download <filename>"}
+            return self.file_manager.download_file(args[0])
+        
+        elif command == "ping":
+            return {"status": "success", "message": "pong", "is_admin": self.is_admin}
+        
+        else:
+            return {"status": "error", "message": f"Komande e panjohur: {command}"}
+    
+    def send_message(self, message):
+        """Dergo mesazh tek klienti"""
+        try:
+            self.client_socket.send(json.dumps(message).encode('utf-8'))
+        except Exception as e:
+            print(f" Error ne dergim: {e}")
+    
+    def disconnect(self):
+        """Mbylle lidhjen"""
+        if self.running:
+            self.running = False
+            self.server_stats["active_connections"] -= 1
+            self.on_disconnect(self.client_address)
+            try:
+                self.client_socket.close()
+            except:
+                pass
+            print(f"Klient u shkeput: {self.client_address}")
