@@ -96,3 +96,57 @@ class TCPClient:
         else:
             if 'message' in response:
                 print(f"[INFO]: {response['message']}")    
+
+    def run(self):
+        """Loop kryesor"""
+        if not self.connect():
+            return
+
+        print("\n" + "=" * 40)
+        print("KOMANDAT:")
+        print("  /list, /read <file>, /search <keyword>")
+        print("  /info <file>, /download <file>")
+        if self.is_admin:
+            print("  /upload <file> <content>, /delete <file>")
+        print("  help - Ndihmë")
+        print("  exit - Dalje")
+        print("=" * 40 + "\n")
+
+        if self.is_admin:
+            print(">>> JE ADMIN - Ke qasje të plotë!\n")
+
+        while self.connected:
+            try:
+                if self.is_admin:
+                    user_input = input("[ADMIN] > ")
+                else:
+                    user_input = input("[USER] > ")
+
+                if not user_input:
+                    continue
+
+                if user_input.lower() == 'exit':
+                    break
+
+                if user_input.lower() == 'help':
+                    self.command_handler.show_help(self.is_admin)
+                    continue
+
+                message = self.command_handler.execute(user_input)
+                if message:
+                    if not self.send(message):
+                        break
+
+                    response = self.receive()
+                    if response:
+                        self.display_response(response)
+                    else:
+                        print("[!] Serveri nuk përgjigjet. Lidhja u mbyll.")
+                        break
+
+            except KeyboardInterrupt:
+                print("\n[!] Ndërprerë nga përdoruesi")
+                break
+            except Exception as e:
+                print(f"[!] Gabim: {e}")
+                break            
