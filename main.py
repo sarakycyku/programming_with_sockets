@@ -149,4 +149,18 @@ class TCPClient:
                 break
             except Exception as e:
                 print(f"[!] Gabim: {e}")
-                break            
+                break 
+    def disconnect(self):
+        """Mbylle lidhjen"""
+        self.connected = False
+        if self.socket:
+            try:
+                self.socket.close()
+            except:
+                pass
+        print("\n[+] Lidhja u mbyll.")
+
+
+if __name__ == "__main__":
+    client = TCPClient()
+    client.run()           
