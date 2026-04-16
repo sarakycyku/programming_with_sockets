@@ -16,11 +16,13 @@ from client.commands import CommandHandler
 import socket
 import json
 class TCPClient:
+
     def __init__(self):
         self.socket = None
         self.connected = False
         self.is_admin = False
         self.command_handler = CommandHandler(self)
+
     def connect(self):
         """Lidhu me serverin"""
         try:
@@ -40,7 +42,8 @@ class TCPClient:
 
         except Exception as e:
             print(f"[!] Gabim në lidhje: {e}")
-            return False    
+            return False  
+          
     def receive(self):
         """Merr përgjigje nga serveri"""
         try:
@@ -53,6 +56,7 @@ class TCPClient:
         except Exception as e:
             print(f"[!] Gabim në marrje: {e}")
             return None
+        
 
     def send(self, message):
         """Dërgo mesazh tek serveri"""
@@ -63,6 +67,7 @@ class TCPClient:
             print(f"[!] Gabim në dërgim: {e}")
             self.connected = False
             return False    
+        
     def display_response(self, response):
         """Shfaq përgjigjen nga serveri"""
         status = response.get('status', 'unknown')
@@ -96,6 +101,7 @@ class TCPClient:
         else:
             if 'message' in response:
                 print(f"[INFO]: {response['message']}")    
+
 
     def run(self):
         """Loop kryesor"""
@@ -150,6 +156,7 @@ class TCPClient:
             except Exception as e:
                 print(f"[!] Gabim: {e}")
                 break 
+            
     def disconnect(self):
         """Mbylle lidhjen"""
         self.connected = False
