@@ -21,4 +21,23 @@ class TCPClient:
         self.connected = False
         self.is_admin = False
         self.command_handler = CommandHandler(self)
-        
+    def connect(self):
+        """Lidhu me serverin"""
+        try:
+            print(f"[+] Duke u lidhur me {SERVER_HOST}:{SERVER_PORT}...")
+            self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.socket.settimeout(CONNECTION_TIMEOUT)
+            self.socket.connect((SERVER_HOST, SERVER_PORT))
+            self.connected = True
+
+            response = self.receive()
+            if response:
+                print(f"\n[SERVER]: {response.get('message', '')}")
+                print(f"Privilegjet: {response.get('permissions', 'unknown')}")
+                self.is_admin = "write" in response.get('permissions', '')
+
+            return True
+
+        except Exception as e:
+            print(f"[!] Gabim në lidhje: {e}")
+            return False    
