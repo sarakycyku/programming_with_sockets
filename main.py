@@ -63,3 +63,36 @@ class TCPClient:
             print(f"[!] Gabim në dërgim: {e}")
             self.connected = False
             return False    
+    def display_response(self, response):
+        """Shfaq përgjigjen nga serveri"""
+        status = response.get('status', 'unknown')
+
+        if status == 'error':
+            print(f"[GABIM]: {response.get('message', 'Gabim i panjohur')}")
+
+        elif status == 'success':
+            if 'files' in response:
+                files = response['files']
+                if files:
+                    print(f"\nFile-t ({len(files)}):")
+                    for f in files:
+                        print(f"  - {f}")
+                else:
+                    print("Nuk ka file.")
+
+            elif 'content' in response:
+                print(f"\n--- PËRMBAJTJA ---\n{response['content']}\n--- FUND ---")
+
+            elif 'info' in response:
+                info = response['info']
+                print(f"\nInfo për '{info['filename']}':")
+                print(f"  Madhësia: {info['size_kb']} KB ({info['size_bytes']} bytes)")
+                print(f"  Krijuar: {info['created']}")
+                print(f"  Modifikuar: {info['modified']}")
+
+            else:
+                print(f"[OK]: {response.get('message', 'Sukses')}")
+
+        else:
+            if 'message' in response:
+                print(f"[INFO]: {response['message']}")    
