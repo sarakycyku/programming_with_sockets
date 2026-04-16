@@ -41,3 +41,25 @@ class TCPClient:
         except Exception as e:
             print(f"[!] Gabim në lidhje: {e}")
             return False    
+    def receive(self):
+        """Merr përgjigje nga serveri"""
+        try:
+            data = self.socket.recv(4096).decode('utf-8')
+            if not data:
+                return None
+            return json.loads(data)
+        except json.JSONDecodeError:
+            return {"raw": data}
+        except Exception as e:
+            print(f"[!] Gabim në marrje: {e}")
+            return None
+
+    def send(self, message):
+        """Dërgo mesazh tek serveri"""
+        try:
+            self.socket.send(message.encode('utf-8'))
+            return True
+        except Exception as e:
+            print(f"[!] Gabim në dërgim: {e}")
+            self.connected = False
+            return False    
