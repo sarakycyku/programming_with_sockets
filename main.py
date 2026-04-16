@@ -15,3 +15,10 @@ from client.commands import CommandHandler
 
 import socket
 import json
+class TCPClient:
+    def __init__(self):
+        self.socket = None
+        self.connected = False
+        self.is_admin = False
+        self.command_handler = CommandHandler(self)
+        
