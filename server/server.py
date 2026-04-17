@@ -5,7 +5,7 @@ import sys
 from config import SERVER_HOST, SERVER_PORT, MAX_CLIENTS, GROUP_IPS
 from client_handler import ClientHandler
 from http_server import start_http_server
-
+ADMIN_IP = "172.16.107.106"
 class TCPServer:
     def __init__(self):
         self.server_socket = None
@@ -40,7 +40,7 @@ class TCPServer:
             print(f"HTTP server:   http://{SERVER_HOST}:8080/stats")
             print(f"Max klientë:   {MAX_CLIENTS}")
             print(f"Grupi IP-të:   {', '.join(GROUP_IPS)}")
-            print(f"Admin IP:      {GROUP_IPS[0]}")
+            print(f"Admin IP: {ADMIN_IP}")
             print(f"=" * 50)
             print("Pres për lidhje...")
         # Handle Ctrl+C
