@@ -2,7 +2,8 @@ import socket
 import threading
 import json
 import time
-from config import CLIENT_TIMEOUT, ADMIN_IP
+import ipaddress
+from config import CLIENT_TIMEOUT, ADMIN_IP, GROUP_IPS, ALLOW_LOCALHOST_ADMIN
 from file_manager import FileManager
 
 class ClientHandler(threading.Thread):
@@ -14,7 +15,48 @@ class ClientHandler(threading.Thread):
         self.server_stats = server_stats
         self.on_disconnect = on_disconnect
         self.file_manager = FileManager()
-        self.is_admin = (self.client_ip == ADMIN_IP)
+        # Normalize client/admin IPs to handle IPv4, IPv6 and IPv4-mapped IPv6
+        try:
+            client_ip_obj = ipaddress.ip_address(self.client_ip)
+            if getattr(client_ip_obj, 'ipv4_mapped', None):
+                client_norm = client_ip_obj.ipv4_mapped.compressed
+            else:
+                client_norm = client_ip_obj.compressed
+        except Exception:
+            client_norm = self.client_ip
+
+        # Normalize admin IP
+        try:
+            admin_ip_obj = ipaddress.ip_address(ADMIN_IP)
+            if getattr(admin_ip_obj, 'ipv4_mapped', None):
+                admin_norm = admin_ip_obj.ipv4_mapped.compressed
+            else:
+                admin_norm = admin_ip_obj.compressed
+        except Exception:
+            admin_norm = ADMIN_IP
+
+        # Normalize group IPs
+        group_norms = set()
+        try:
+            for ip in GROUP_IPS:
+                ip_obj = ipaddress.ip_address(ip)
+                if getattr(ip_obj, 'ipv4_mapped', None):
+                    group_norms.add(ip_obj.ipv4_mapped.compressed)
+                else:
+                    group_norms.add(ip_obj.compressed)
+        except Exception:
+            group_norms = set(GROUP_IPS)
+
+        # Determine admin: exact admin IP, group membership, or localhost (if allowed)
+        is_admin = False
+        if client_norm == admin_norm:
+            is_admin = True
+        elif client_norm in group_norms:
+            is_admin = True
+        elif ALLOW_LOCALHOST_ADMIN and client_norm in ("127.0.0.1", "::1"):
+            is_admin = True
+
+        self.is_admin = is_admin
         self.running = True
         self.last_activity = time.time()
         
