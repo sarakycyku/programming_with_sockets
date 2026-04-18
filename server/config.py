@@ -23,8 +23,5 @@ GROUP_IPS = ["172.16.107.1", "172.16.107.96", "172.16.107.97"]
 # Admin-i (klienti me privilegje të plota) - IP e parë
 ADMIN_IP = "172.16.107.106"
 
-# Allow localhost (127.0.0.1 / ::1) to be treated as admin for local testing
-ALLOW_LOCALHOST_ADMIN = True
-
 # Krijo folderin nëse nuk ekziston
 os.makedirs(DATA_DIR, exist_ok=True)
