@@ -1,27 +1,30 @@
-# Konfigurimet e serverit - Grupi 33
+"""
+Central configuration for the TCP server and HTTP monitor.
+Edit these values before running -- no other file needs to change.
+"""
 import os
 
-# IP dhe Porti i serverit kryesor (TCP Socket)
-SERVER_HOST = "0.0.0.0"  # Dëgjon në të gjitha interfacet
-SERVER_PORT = 5000       # Porti kryesor për TCP socket
+# -- Network ------------------------------------------------------------------
+SERVER_HOST = "0.0.0.0"   # Listen on all network interfaces
+SERVER_PORT = 9000         # TCP server port
+HTTP_PORT   = 9080         # HTTP monitoring port (GET /stats)
 
-# HTTP Server (për statistika)
-HTTP_HOST = "0.0.0.0"
-HTTP_PORT = 8080
+# -- Connection limits ---------------------------------------------------------
+MAX_CONNECTIONS         = 4  # Absolute cap on simultaneous clients
+MAX_REGULAR_CONNECTIONS = 3   # Cap for non-admin clients (admins bypass this)
+CONNECTION_QUEUE_SIZE   = 5   # OS-level listen() backlog
 
-# Pragjet
-MAX_CLIENTS = 5          # Maksimumi i klientëve (3 veta + rezervë)
-CLIENT_TIMEOUT = 60      # Sekonda për timeout (mbylle lidhjen nëse hesht)
+# -- Timeouts ------------------------------------------------------------------
+CLIENT_TIMEOUT_SECONDS  = 120  # Seconds of recv inactivity -> disconnect
+TIMEOUT_CHECK_INTERVAL  = 15   # How often the background monitor sweeps (seconds)
 
-# Folderi për file-t
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data", "files")
+# -- Authentication ------------------------------------------------------------
+ADMIN_TOKEN = "super-secret-admin-token"  # Must match client/config.py
 
-# IP-të e anëtarëve të grupit (3 veta)
-GROUP_IPS = ["172.16.107.1", "172.16.107.96", "172.16.107.97"]
+# -- File system ---------------------------------------------------------------
+_PROJECT_ROOT   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SERVER_FILES_DIR = os.path.join(_PROJECT_ROOT, "server_files")
 
-# Admin-i (klienti me privilegje të plota) - IP e parë
-ADMIN_IP = "172.16.107.106"
-
-# Krijo folderin nëse nuk ekziston
-os.makedirs(DATA_DIR, exist_ok=True)
+# -- Logging -------------------------------------------------------------------
+LOG_FILE           = os.path.join(_PROJECT_ROOT, "server.log")
+MAX_STORED_MESSAGES = 500  # In-memory deque cap
