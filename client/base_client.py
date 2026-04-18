@@ -68,3 +68,75 @@ class BaseClient:
             self._sock = None
             self._role = None
 
+
+    # -- Messaging --------------------------------------------------------------
+
+    def send_message(self, text: str) -> Optional[dict]:
+        return self._send_and_recv("message", {"text": text})
+
+    # -- Properties -------------------------------------------------------------
+
+    @property
+    def is_connected(self) -> bool:
+        return self._sock is not None
+
+    @property
+    def role(self) -> Optional[str]:
+        return self._role
+
+    # -- Internals --------------------------------------------------------------
+
+    def _authenticate(self) -> bool:
+        """Send auth frame; parse server response. Returns True on success."""
+        try:
+            self._sock.sendall(protocol.encode("auth", {"token": self._token}))
+        except OSError as exc:
+            print(f"[CLIENT] Failed to send auth: {exc}")
+            return False
+
+        resp = protocol.recv(self._sock)
+        if not resp:
+            print("[CLIENT] Server closed connection during auth")
+            return False
+
+        rtype = resp.get("type", "")
+        payload = resp.get("payload", {})
+
+        if rtype == "reject":
+            print(f"[CLIENT] Connection rejected: {payload.get('reason', '?')}")
+            return False
+        if rtype == "auth_fail":
+            print(f"[CLIENT] Auth failed: {payload.get('reason', '?')}")
+            return False
+        if rtype == "auth_ok":
+            self._role = payload.get("role", "unknown")
+            return True
+
+        print(f"[CLIENT] Unexpected auth response type: {rtype}")
+        return False
+
+    def _send_raw(self, msg_type: str, payload: dict) -> None:
+        if self._sock:
+            self._sock.sendall(protocol.encode(msg_type, payload))
+
+    def _send_and_recv(
+        self,
+        msg_type: str,
+        payload: dict,
+        auto_reconnect: bool = True,
+    ) -> Optional[dict]:
+        if not self._sock:
+            return None
+        try:
+            self._send_raw(msg_type, payload)
+            return protocol.recv(self._sock)
+        except OSError as exc:
+            print(f"[CLIENT] Socket error: {exc}")
+            self._sock = None
+            if auto_reconnect and self.reconnect():
+                try:
+                    self._send_raw(msg_type, payload)
+                    return protocol.recv(self._sock)
+                except OSError:
+                    pass
+            return None
