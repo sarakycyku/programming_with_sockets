@@ -1,0 +1,10 @@
+Welcome to the TCP Server file system!
+
+This is a sample file placed here so you can immediately test
+/read, /info, /search, and /download commands without uploading first.
+
+Try:
+  /read sample.txt
+  /info sample.txt
+  /search Welcome
+  /download sample.txt
