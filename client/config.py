@@ -6,7 +6,7 @@ to the LAN IP address of the server (e.g. "192.168.1.42").
 Find it with: ipconfig (Windows) or ip addr (Linux/macOS).
 """
 
-SERVER_HOST = "127.0.0.1"   # <secili e qitni ip tjuaj per me na bo
+SERVER_HOST = "172.20.10.7"   # <secili e qitni ip tjuaj per me na bo
 SERVER_PORT = 9000
 
 # Must match server/config.py -> ADMIN_TOKEN
