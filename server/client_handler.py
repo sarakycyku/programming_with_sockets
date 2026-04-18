@@ -134,10 +134,12 @@ class ClientHandler(threading.Thread):
 
     def _handle_command(self, cmd: str, args: list) -> dict:
         """Execute admin commands via file_manager and return payload dict."""
-        # Commands that operate on server files
-        file_cmds = {"/list", "/read", "/upload", "/download", "/delete", "/search", "/info"}
+        # Distinguish read-only vs write commands. Read commands are allowed
+        # for all clients; write commands require admin privileges.
+        read_cmds = {"/list", "/read", "/download", "/search", "/info"}
+        write_cmds = {"/upload", "/delete"}
 
-        if cmd in file_cmds and not self._is_admin:
+        if cmd in write_cmds and not self._is_admin:
             return {"error": "Permission denied: admin only"}
 
         try:
