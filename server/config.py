@@ -18,10 +18,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data", "files")
 
 # IP-të e anëtarëve të grupit (3 veta)
-GROUP_IPS = ["192.168.0.17", "192.168.0.12", "192.168.0.102"]
+GROUP_IPS = ["172.16.107.1", "172.16.107.96", "172.16.107.97"]
 
 # Admin-i (klienti me privilegje të plota) - IP e parë
-ADMIN_IP = "192.168.0.17"
+ADMIN_IP = "172.16.107.106"
 
 # Krijo folderin nëse nuk ekziston
 os.makedirs(DATA_DIR, exist_ok=True)

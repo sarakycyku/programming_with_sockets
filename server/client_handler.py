@@ -14,9 +14,15 @@ class ClientHandler(threading.Thread):
         self.server_stats = server_stats
         self.on_disconnect = on_disconnect
         self.file_manager = FileManager()
-        self.is_admin = (self.client_ip == ADMIN_IP)
+
+        # Fix: Check both ADMIN_IP and localhost
+        self.is_admin = (self.client_ip == ADMIN_IP) or (self.client_ip == "127.0.0.1")
+
         self.running = True
         self.last_activity = time.time()
+        print("CLIENT IP:", self.client_ip)
+        print("ADMIN IP:", ADMIN_IP)
+        print("IS ADMIN:", self.is_admin)  # Add this debug line
         
     def run(self):
         """Trajtimi i lidhjes me klientin"""

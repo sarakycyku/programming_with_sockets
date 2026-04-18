@@ -2,7 +2,7 @@
 import os
 
 # IP dhe Porti i serverit kryesor (TCP Socket)
-SERVER_HOST = "192.168.0.17"
+SERVER_HOST = "172.16.107.106"
 SERVER_PORT = 5000       # Porti kryesor për TCP socket
 CONNECTION_TIMEOUT = 10
 # HTTP Server (për statistika)
@@ -18,10 +18,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data", "files")
 
 # IP-të e anëtarëve të grupit (3 veta)
-GROUP_IPS = ["192.168.0.17", " 192.168.0.21", "192.168.0.102"]
+GROUP_IPS = ["172.16.107.106", "172.16.107.96", "172.16.107.97"]
 
 # Admin-i (klienti me privilegje të plota) - IP e parë
-ADMIN_IP = "192.168.0.21"
+ADMIN_IP = "172.16.107.106"
 
 # Krijo folderin nëse nuk ekziston
 os.makedirs(DATA_DIR, exist_ok=True)
