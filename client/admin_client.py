@@ -127,3 +127,53 @@ class AdminClient(BaseClient):
         else:
             print(f"Unknown command '{cmd}'. Type /help for the command list.")
 
+        # -- File operations --------------------------------------------------------
+
+        def _do_upload(self, local_path: str) -> None:
+            if not os.path.isfile(local_path):
+                print(f"[ERROR] Local file not found: {local_path}")
+                return
+            filename = os.path.basename(local_path)
+            with open(local_path, "rb") as fh:
+                content_b64 = base64.b64encode(fh.read()).decode("ascii")
+            self._print(self._cmd("/upload", [filename, content_b64]))
+
+        def _do_download(self, filename: str) -> None:
+            resp = self._cmd("/download", [filename])
+            if resp is None:
+                print("[ERROR] No response from server")
+                return
+            payload = resp.get("payload", {})
+            if "error" in payload:
+                print(f"[ERROR] {payload['error']}")
+                return
+            content_b64 = payload.get("content_b64", "")
+            data = base64.b64decode(content_b64)
+            save_path = os.path.join(os.getcwd(), filename)
+            with open(save_path, "wb") as fh:
+                fh.write(data)
+            print(f"[OK] Downloaded '{filename}' -> {save_path}  ({len(data):,} bytes)")
+
+        # -- Helpers ----------------------------------------------------------------
+
+        def _cmd(self, cmd: str, args: list) -> dict:
+            return self._send_and_recv("command", {"cmd": cmd, "args": args})
+
+        @staticmethod
+        def _print(resp: dict) -> None:
+            if resp is None:
+                print("[ERROR] No response received")
+                return
+            payload = resp.get("payload", {})
+            if "error" in payload:
+                print(f"[ERROR] {payload['error']}")
+            elif "content" in payload:
+                # /read response: pretty-print file text
+                print(f"-- {payload.get('filename', '')} --")
+                print(payload["content"])
+                print("--------------------------------")
+            elif isinstance(payload, dict):
+                print(json.dumps(payload, indent=2))
+
+    if __name__ == "__main__":
+        AdminClient().run_interactive()
