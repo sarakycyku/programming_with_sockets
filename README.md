@@ -1,25 +1,35 @@
 # programming_with_sockets
 # TCP Server & Client - PYTHON
 
-Sistem për menaxhimin e skedarëve përmes TCP me dy role: **Admin** dhe **Readonly klient**.
+Ky projekt eshte nje shembull i nje serveri TCP me kliente **admin** dhe **read-only** dhe nje HTTP  per monitorim dhe statistika.
 
 ---
 
 
-## 🎯 Qëllimi i projektit
+##  Qëllimi i projektit
 
-Qëllimi i këtij projekti është me ndërtu një sistem klient-server për menaxhimin e skedarëve përmes TCP sockets në Python, ku përdoruesit mund të komunikojnë me serverin në distancë dhe të kryejnë operacione mbi file.
+Qellimi i ketij projekti eshte me ndertu nje sistem klient-server per menaxhimin e files permes TCP sockets ne Python, ku perdoruesit mund te komunikojne me serverin ne distance dhe te kryejne operacione mbi file.
 
-Ky projekt është i dizajnuar kryesisht për mësim dhe praktikë të koncepteve të mëposhtme:
+Ky projekt eshte i dizajnuar kryesisht per mesim dhe praktike te koncepteve te meposhtme:
 
 Komunikimi Client–Server me TCP
 Programimi me threads (multi-client handling)
-Ndërtimi i një protokolli të thjeshtë komunikimi (JSON messages)
+Ndertimi i nje protokolli te thjeshte komunikimi (JSON messages)
 Menaxhimi i role-based access (Admin / Readonly)
-Operacione mbi skedarë në server (upload, download, delete, read)
-Trajtimi i requests dhe responses në kohë reale
+Operacione mbi skedare ne server (upload, download, delete, read)
+Trajtimi i requests dhe responses ne kohe reale
 
-## 🚀 Si të filloni?
+## Kerkesat
+
+Hape CMD ose Terminal. Sigurohuni qe python eshte i instaluar:
+
+``python --version``
+
+Clone the repo:
+``https://github.com/sarakycyku/programming_with_sockets.git``
+
+    
+##  Si te filloni?
 
 1. Nis serverin: `python run_server.py`
 2. Nis klientin admin: `python run_admin.py`
@@ -27,67 +37,64 @@ Trajtimi i requests dhe responses në kohë reale
 
 ---
 
-## 🧑‍💻 Komandat e Admin-it
+##  Komandat e Admin-it
 
 | Komanda | Përshkrimi |
 |---------|-------------|
-| `/list` | Liston skedarët në server |
-| `/read <file>` | Lexon përmbajtjen e skedarit |
-| `/upload <file>` | Ngarkon skedar në server |
-| `/download <file>` | Shkarkon skedar nga serveri |
-| `/delete <file>` | Fshin skedarin nga serveri |
-| `/search <keyword>` | Kërkon fjalë në skedarë |
-| `/info <file>` | Tregon informacione për skedarin |
-| `/help` | Shfaq ndihmën |
+| `/list` | Liston files në server |
+| `/read <file>` | Lexon permbajtjen e file |
+| `/upload <file>` | Ngarkon skedar ne server |
+| `/download <file>` | Shkarkon file nga serveri |
+| `/delete <file>` | Fshin file nga serveri |
+| `/search <keyword>` | Kerkon fjale ne file |
+| `/info <file>` | Tregon informacione per file |
+| `/help` | Shfaq ndihmen |
 | `/quit` | Dil nga klienti |
 
 ---
 
-## 👀 Komandat e Readonly Klientit
+##  Komandat e Readonly Klientit
 
 | Komanda | Përshkrimi |
 |---------|-------------|
-| `/list` | Liston skedarët |
-| `/read <file>` | Lexon skedarin |
-| `/download <file>` | Shkarkon skedar nga serveri |
-| `/search <keyword>` | Kërkon fjalë në skedarë |
+| `/list` | Liston files |
+| `/read <file>` | Lexon fies |
+| `/download <file>` | Shkarkon file nga serveri |
+| `/search <keyword>` | Kerkon fjale ne skedare |
 | `/info <file>` | Tregon informacione |
-| `/help` | Ndihmë |
+| `/help` | Ndihme |
 | `/quit` | Dil |
 
-❌ Nuk lejohen: `/upload`, `/delete`
+Nuk lejohen: `/upload`, `/delete`
 
 ---
 
-## 🌐 Monitorimi
+##  Monitorimi
 
-Hap në browser:
+Hap ne browser:
 http://<IP_ADRESA>:9080/stats
 
-Aty mund të shihni:
-- klientët aktiv
+Aty mund te shihni:
+- klientet aktiv
 - requests (komanda dhe mesazhe)
-- aktivitetin në kohë reale
-- rolet e klientëve
+- aktivitetin ne kohe reale
+- rolet e klienteve
 
 ---
 ## Kufizimet
-Maksimumi 4 klientë gjithsej
-Maksimumi 3 klientë readonly
+Maksimumi 4 kliente gjithsej
+Maksimumi 3 kliente readonly
 Admin nuk ka kufizim komandash
 Timeout: 120 sekonda pasivitet
 
-## 🔄 Si funksionon lidhja?
+##  Si funksionon lidhja?
 Klienti lidhet me serverin (IP + port )
-Dërgon automatikisht auth me token
+Dergon automatikisht auth me token
 Serveri verifikon token-in
 Serveri cakton rolin (admin ose readonly)
-Klienti pranohet nëse ka vend
+Klienti pranohet nese ka vend
 Komunikimi vazhdon përmes TCP requests/replies
 
-## Testimi
-
-## Testimi
 
 # Server
 python run_server.py
@@ -102,7 +109,7 @@ python run_readonly.py
 > Pershendetje server!
 
 
-## 🔧 Ndryshimi i IP-së (cdo klient duhet ta beje)
+##  Ndryshimi i IP-se (cdo klient duhet ta beje)
 
 Hape:
 
@@ -113,27 +120,27 @@ SERVER_HOST = "192.168.1.x"
 SERVER_PORT = 9000  
 ```
 
-## ⚠️ Çka duhet me pasë kujdes klienti
+##  Çka duhet me pase kujdes klienti
 
-Gjatë përdorimit të këtij sistemi, klienti duhet me qenë i kujdesshëm në disa pika të rëndësishme për me shmang probleme dhe gabime gjatë komunikimit me serverin:
+Gjate perdorimit te ketij sistemi, klienti duhet me qene i kujdesshem ne disa pika te rendesishme per me shmang probleme dhe gabime gjate komunikimit me serverin:
 
-### 🔐 Mos e ndrysho token-in (Admin/Readonly)
-Nëse token-i nuk është i saktë, serveri nuk të pranon dhe lidhja dështon.
+###  Mos e ndrysho token-in (Admin/Readonly)
+Nese token-i nuk eshte i sakte, serveri nuk te pranon dhe lidhja deshton.
 
-### 🌐 IP adresa duhet me qenë korrekte
-Nëse `SERVER_HOST` është gabim, klienti nuk mund të lidhet me serverin.
+###  IP adresa duhet me qenë korrekte
+Nese `SERVER_HOST` eshte gabim, klienti nuk mund te lidhet me serverin.
 
-### ⏱️ Timeout i pasivitetit
-Nëse klienti nuk dërgon asnjë veprim për 120 sekonda, serveri mund ta shkëpusë automatikisht.
+###  Timeout i pasivitetit
+Nese klienti nuk dergon asnje veprim per 120 sekonda, serveri mund ta shkepuse automatikisht.
 
-### 🚫 Respekto kufizimet e roleve
-Readonly klienti nuk guxon me përdor komanda si `/upload` ose `/delete`, sepse serveri i refuzon.
+###  Respekto kufizimet e roleve
+Readonly klienti nuk guxon me perdor komanda si `/upload` ose `/delete`, sepse serveri i refuzon.
 
-### 📡 Komandat duhet me qenë të sakta
-Gabime në shkrimin e komandave (p.sh. `/readd` në vend të `/read`) rezultojnë me error.
+###  Komandat duhet me qene të sakta
+Gabime ne shkrimin e komandave (p.sh. `/readd` ne vend te `/read`) rezultojne me error.
 
-### 🔄 Mos e mbyll lidhjen papritur
-Mbyllja pa `/quit` mund me shkaktu disconnect jo të pastër dhe gabime në server.
+###  Mos e mbyll lidhjen papritur
+Mbyllja pa `/quit` mund me shkaktu disconnect jo të paster dhe gabime ne server.
 
 
 
