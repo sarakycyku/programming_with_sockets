@@ -5,7 +5,8 @@ Sistem për menaxhimin e skedarëve përmes TCP me dy role: **Admin** dhe **Read
 
 ---
 
-##🎯 Qëllimi i projektit
+
+## 🎯 Qëllimi i projektit
 
 Qëllimi i këtij projekti është me ndërtu një sistem klient-server për menaxhimin e skedarëve përmes TCP sockets në Python, ku përdoruesit mund të komunikojnë me serverin në distancë dhe të kryejnë operacione mbi file.
 
