@@ -21,6 +21,11 @@ TIMEOUT_CHECK_INTERVAL  = 15   # How often the background monitor sweeps (second
 # -- Authentication ------------------------------------------------------------
 ADMIN_TOKEN = "super-secret-admin-token"  # Must match client/config.py
 
+# -- Response timing ----------------------------------------------------------
+# Artificial delay applied before sending responses to regular (non-admin)
+# clients so admin clients receive faster responses. Measured in seconds.
+REGULAR_RESPONSE_DELAY_SECONDS = 0.05  # 50 ms
+
 # -- File system ---------------------------------------------------------------
 _PROJECT_ROOT   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SERVER_FILES_DIR = os.path.join(_PROJECT_ROOT, "server_files")

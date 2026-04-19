@@ -17,8 +17,9 @@ Priority model:
 """
 import socket
 import threading
+import time
 
-from server.config import ADMIN_TOKEN, CLIENT_TIMEOUT_SECONDS
+from server.config import ADMIN_TOKEN, CLIENT_TIMEOUT_SECONDS, REGULAR_RESPONSE_DELAY_SECONDS
 from server import file_manager
 from shared import protocol
 
@@ -90,6 +91,10 @@ class ClientHandler(threading.Thread):
         can treat send failures as a benign disconnect event.
         """
         try:
+            # Apply a small delay for regular clients so admin responses are faster.
+            if not self._is_admin and REGULAR_RESPONSE_DELAY_SECONDS > 0:
+                time.sleep(REGULAR_RESPONSE_DELAY_SECONDS)
+
             self._sock.sendall(protocol.encode(msg_type, payload))
             return True
         except OSError:
